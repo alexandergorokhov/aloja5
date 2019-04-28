@@ -9,13 +9,27 @@ public class TouchFileCommand implements Command {
 
     @Override
     public void execute() {
-        File file = new File(name);
-        currentNode.addChild(file);
-
+        if (CommandsUtils.isTheLengthWithinParameters(100, name, "File  name is too long")) {
+            File file = new File(name);
+            currentNode.addChild(file);
+        }
     }
 
     public TouchFileCommand(Node currentNode, String name) {
         this.currentNode = currentNode;
         this.name = name;
+    }
+
+    public TouchFileCommand() {
+    }
+
+    @Override
+    public void setArgument(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void setCurrentNode(Node currentNode) {
+        this.currentNode = currentNode;
     }
 }

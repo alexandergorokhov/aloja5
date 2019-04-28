@@ -14,6 +14,17 @@ public class ChangeDirectoryCommand implements Command {
         this.pathToChange = pathToChange;
     }
 
+    public ChangeDirectoryCommand() {
+    }
+
+    public void setCurrentNode(Node currentNode) {
+        this.currentNode = currentNode;
+    }
+
+    public void setArgument(String pathToChange) {
+        this.pathToChange = pathToChange;
+    }
+
     @Override
     public void execute() {
         Optional<Node> node = currentNode.changeDirectoryConcatenated(pathToChange);

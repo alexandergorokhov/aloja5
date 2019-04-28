@@ -15,7 +15,23 @@ public class MakeDirectoryCommand implements Command {
 
     @Override
     public void execute() {
-        Directory directory = new Directory(this.name);
-        currentNode.addChild(directory);
+        if(CommandsUtils.isTheLengthWithinParameters(100,name,"Directory name is too long")){
+            Directory directory = new Directory(this.name);
+            currentNode.addChild(directory);
+        }
+
+    }
+
+    @Override
+    public void setArgument(String name) {
+        this.name = name;
+    }
+
+    public MakeDirectoryCommand() {
+    }
+
+    @Override
+    public void setCurrentNode(Node currentNode) {
+        this.currentNode = currentNode;
     }
 }

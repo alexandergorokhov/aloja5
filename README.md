@@ -2,7 +2,8 @@
 Since no information has been provided following assumptions has been made:
 1. This is a simulation, no real interaciton with File system is needed.
 2. Only one file was specified in the challenge for unit testing. So no other was created by the author
-3. Since no specification was provided about the persistence, the state of the applicacion is s
+3. Since no specification was provided about the persistence, the state of the applicacion is stored in a file.
+4. Since the only message for duplicate entries available is "Directory already exists", the same is used for files.
 
 # Prerequisite
 Java 8 or higher.

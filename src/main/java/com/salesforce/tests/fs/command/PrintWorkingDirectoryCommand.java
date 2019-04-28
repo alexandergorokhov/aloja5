@@ -14,4 +14,17 @@ public class PrintWorkingDirectoryCommand implements Command {
         System.out.println(currentNode.getName());
 
     }
+
+    public PrintWorkingDirectoryCommand() {
+    }
+
+    @Override
+    public void setArgument(String pathToChange) {
+
+    }
+
+    @Override
+    public void setCurrentNode(Node currentNode) {
+        this.currentNode = currentNode;
+    }
 }

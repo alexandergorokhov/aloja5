@@ -1,6 +1,7 @@
-package com.salesforce.tests.fs.command;
+package com.salesforce.tests.fs.command.commandImplementation;
 
-import com.salesforce.tests.fs.fs.Node;
+import com.salesforce.tests.fs.command.Command;
+import com.salesforce.tests.fs.model.Node;
 
 public class ListContentRecursive implements Command {
     private Node currentNode;
@@ -24,6 +25,6 @@ public class ListContentRecursive implements Command {
 
     @Override
     public void setCurrentNode(Node currentNode) {
-        this.currentNode=currentNode;
+        this.currentNode = currentNode;
     }
 }

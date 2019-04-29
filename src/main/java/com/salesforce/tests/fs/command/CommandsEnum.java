@@ -32,7 +32,7 @@ public enum CommandsEnum {
     }
 
     public static CommandsEnum get(String command) {
-        return lookup.getOrDefault(command,COMMMAND_UNKNOWN);
+        return lookup.getOrDefault(command, COMMMAND_UNKNOWN);
     }
 
     @Override

@@ -1,8 +1,9 @@
-package com.salesforce.tests.fs.command;
+package com.salesforce.tests.fs.command.commandImplementation;
 
+import com.salesforce.tests.fs.command.Command;
 import com.salesforce.tests.fs.fs.FileSystemTree;
 import com.salesforce.tests.fs.fs.FsSimulation;
-import com.salesforce.tests.fs.fs.Node;
+import com.salesforce.tests.fs.model.Node;
 
 public class QuitCommand implements Command {
     public void execute() {

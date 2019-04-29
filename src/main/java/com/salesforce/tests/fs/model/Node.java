@@ -1,4 +1,4 @@
-package com.salesforce.tests.fs.fs;
+package com.salesforce.tests.fs.model;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public abstract class Node implements Serializable{
+public abstract class Node implements Serializable {
     protected List<Node> childs = new LinkedList<>();
     protected String name;
 
@@ -19,10 +19,15 @@ public abstract class Node implements Serializable{
     }
 
     public abstract boolean isFile();
+
     public abstract void listContent();
+
     public abstract Stream<Node> getCurrentAndChilds();
+
     public abstract Optional<Node> changeDirectory(String name);
+
     public abstract void addChild(Node node);
+
     public abstract Optional<Node> changeDirectoryConcatenated(String concatenatedPath);
 
     @Override
@@ -42,6 +47,7 @@ public abstract class Node implements Serializable{
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
+
     @Override
     public String toString() {
         return name;

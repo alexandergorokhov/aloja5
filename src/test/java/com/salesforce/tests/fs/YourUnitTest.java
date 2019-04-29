@@ -1,14 +1,13 @@
 package com.salesforce.tests.fs;
 
-import com.salesforce.tests.fs.fs.Directory;
-import com.salesforce.tests.fs.fs.File;
-import com.salesforce.tests.fs.fs.FileSystemTree;
-import com.salesforce.tests.fs.fs.Node;
+import com.salesforce.tests.fs.fs.*;
+import com.salesforce.tests.fs.model.Directory;
+import com.salesforce.tests.fs.model.File;
+import com.salesforce.tests.fs.model.Node;
 import org.junit.*;
+import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,11 +32,30 @@ public class YourUnitTest {
     private static Node file2Level3;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final PrintStream originalOut = System.out;
+    private ByteArrayInputStream inContent;
 
+    private final PrintStream originalOut = System.out;
+    private final InputStream originalIn = System.in;
+
+
+    @Before
+    public void setUpStreams() {
+        System.setOut(new PrintStream(outContent));
+    }
+
+    @After
+    public void restoreStreams() {
+        System.setOut(originalOut);
+    }
+
+    private void provideInput(String data) {
+        inContent = new ByteArrayInputStream(data.getBytes());
+        System.setIn(inContent);
+
+    }
 
     @BeforeClass
-    public static void setup() {
+    public static  void setup() {
 
         root = (Directory) FileSystemTree.getFileSystemMap().get("/root");
 
@@ -67,18 +85,14 @@ public class YourUnitTest {
 
         directory1Level2.addChild(file1Level3);
         directory1Level2.addChild(file2Level3);
+        HashMap map =  FileSystemTree.getFileSystemMap();
 
     }
 
-    @Before
-    public void setUpStreams() {
-        System.setOut(new PrintStream(outContent));
-    }
 
-    @After
-    public void restoreStreams() {
-        System.setOut(originalOut);
-    }
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
 
     //----PWD
     @Test
@@ -174,14 +188,20 @@ public class YourUnitTest {
     }
 
     // MKDIR
-
     @Test
-    public void mkdirExistingdiretoryCommandTest() {
+    public void mkdirExistingDiretoryCommandTest() {
         Directory directory = new Directory("directory2Level1");
         root.addChild(directory);
-        Assert.assertFalse(FileSystemTree.getFileSystemMap().containsKey(directory));
-
+        Assert.assertEquals("Directory already exists" + System.getProperty("line.separator"), outContent.toString());
     }
+
+    @Test
+    public void mkdirNonExistingDiretoryCommandTest() {
+        Directory directory = new Directory("directoryNewLevel1");
+        root.addChild(directory);
+        Assert.assertTrue(FileSystemTree.getFileSystemMap().containsKey(directory.getName()));
+    }
+
 
     //CD
     @Test
@@ -218,28 +238,27 @@ public class YourUnitTest {
     @Test
     public void changeExistingDirectoryDownByNameRecursivelyCommandTest() {
         Optional<Node> node = root.changeDirectoryConcatenated("directory1Level1/directory1Level2/..");
-        Assert.assertEquals(node.get(),directory1Level1);
+        Assert.assertEquals(node.get(), directory1Level1);
     }
 
     @Test
     public void changeExistingDirectoryUpByNameRecursivelyCommandTest() {
         Optional<Node> node = directory1Level1.changeDirectoryConcatenated("../directory2Level1");
-        Assert.assertEquals(node.get(),directory2Level1);
+        Assert.assertEquals(node.get(), directory2Level1);
     }
 
     @Test
     public void changeExistingDirectoryUpByNameRecursivelyToRootCommandTest() {
         Optional<Node> node = directory1Level2.changeDirectoryConcatenated("../..");
-        Assert.assertEquals(node.get(),root);
+        Assert.assertEquals(node.get(), root);
     }
 
     @Test
     public void changeInxistingDirectoryUpByNameRecursivelyToRootCommandTest() {
         Optional<Node> node = directory1Level2.changeDirectoryConcatenated("../test/root");
         Assert.assertEquals("Invalid path" + System.getProperty("line.separator"), outContent.toString());
-        Assert.assertEquals(node,Optional.empty());
+        Assert.assertEquals(node, Optional.empty());
     }
-
 
 
     //Touch
@@ -255,9 +274,9 @@ public class YourUnitTest {
     public void saveLoadTest() {
         HashMap map = new HashMap();
         map.put("uno", 1);
-        map.put("ein",1);
-        FileSystemTree.save("testMap",map);
-        map.put("twei",2);
+        map.put("ein", 1);
+        FileSystemTree.save("testMap", map);
+        map.put("twei", 2);
         HashMap result = null;
         try {
             result = FileSystemTree.load("testMap");
@@ -270,6 +289,69 @@ public class YourUnitTest {
         Assert.assertFalse(result.equals(map));
         map.remove("twei");
         Assert.assertTrue(result.equals(map));
+    }
+
+    @Ignore
+    @Test
+    public void fwSimulation() throws IOException {
+
+        java.io.File createdFile = folder.newFile("testFile.txt");
+        FileSystemTree.setFilePath(createdFile.getPath());
+        FsSimulation fsSimulation = new FsSimulation();
+
+        provideInput("pwd" + System.getProperty("line.separator")
+                + "ls" + System.getProperty("line.separator")
+                + "mkdir testDirectory" + System.getProperty("line.separator")
+                + "ls" + System.getProperty("line.separator")
+                + "ls -r" + System.getProperty("line.separator")
+                + "cd testDirectory" + System.getProperty("line.separator")
+                + "pwd" + System.getProperty("line.separator")
+                + "cd .." + System.getProperty("line.separator")
+                + "cd .." + System.getProperty("line.separator") // checks that no message is displayed
+                + "pwd" + System.getProperty("line.separator")
+                + "touch testFile" + System.getProperty("line.separator")
+                + "ls" + System.getProperty("line.separator")
+                + "uknown command xyz" + System.getProperty("line.separator")
+                + "cd directory1Level1/directory1Level2" + System.getProperty("line.separator")
+                + "pwd" + System.getProperty("line.separator")
+                + "cd .." + System.getProperty("line.separator")
+                + "cd .." + System.getProperty("line.separator")
+                + "pwd" + System.getProperty("line.separator")
+                + "cd directory1Level1/directory1Level2/nonExisting" + System.getProperty("line.separator")
+                + "ls directory1Level1/directory1Level2" + System.getProperty("line.separator")
+                + "quit" + System.getProperty("line.separator"));
+
+        fsSimulation.simulation();
+
+        Assert.assertEquals("/root" + System.getProperty("line.separator")
+                        + "[/root/file1Level1, /root/file2Level1, /root/directory1Level1, /root/directory2Level1, /root/directoryNewLevel1]" + System.getProperty("line.separator")
+                        + "[/root/file1Level1, /root/file2Level1, /root/directory1Level1, /root/directory2Level1, /root/directoryNewLevel1, /root/testDirectory]" + System.getProperty("line.separator")
+                        + "/root" + System.getProperty("line.separator")
+                        + "/root/file1Level1" + System.getProperty("line.separator")
+                        + "/root/file2Level1" + System.getProperty("line.separator")
+                        + "/root/directory1Level1" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/file1Level2" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/directory1Level2" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/directory1Level2/file1Level3" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/directory1Level2/file2Level3" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/newFile" + System.getProperty("line.separator")
+                        + "/root/directory2Level1" + System.getProperty("line.separator")
+                        + "/root/directory2Level1/file2Level2" + System.getProperty("line.separator")
+                        + "/root/directory2Level1/file3Level2" + System.getProperty("line.separator")
+                        + "/root/directoryNewLevel1" + System.getProperty("line.separator")
+                        + "/root/testDirectory" + System.getProperty("line.separator")
+                        + "/root/testDirectory" + System.getProperty("line.separator")
+                        + "/root" + System.getProperty("line.separator")
+                        + "[/root/file1Level1, /root/file2Level1, /root/directory1Level1, /root/directory2Level1, /root/directoryNewLevel1, /root/testDirectory, /root/testFile]" + System.getProperty("line.separator")
+                        + "Non valid command" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/directory1Level2" + System.getProperty("line.separator")
+                        + "/root" + System.getProperty("line.separator")
+                        + "Invalid path" + System.getProperty("line.separator")
+                        + "[/root/directory1Level1/directory1Level2/file1Level3, /root/directory1Level1/directory1Level2/file2Level3]" + System.getProperty("line.separator")
+
+
+                , outContent.toString());
+
     }
 
 

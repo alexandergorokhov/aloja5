@@ -3,7 +3,8 @@ package com.salesforce.tests.fs.fs;
 import com.salesforce.tests.fs.command.Command;
 import com.salesforce.tests.fs.command.CommandFactory;
 import com.salesforce.tests.fs.command.CommandsEnum;
-import com.salesforce.tests.fs.command.NonValidCommand;
+import com.salesforce.tests.fs.command.commandImplementation.NonValidCommand;
+import com.salesforce.tests.fs.model.Node;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -42,8 +43,7 @@ public class FsSimulation {
 
     }
 
-    public static void stopProgramm()
-    {
+    public static void stopProgramm() {
         programRunning = false;
     }
 
@@ -71,16 +71,17 @@ public class FsSimulation {
             } else {
                 commandsEnum = CommandsEnum.get(command);
             }
-            Command commandToExecute = commands.getOrDefault(commandsEnum.toString(), new NonValidCommand());
-            commandToExecute.setCurrentNode(currentNode);
-            commandToExecute.setArgument(aditionalArguments);
-            commandToExecute.execute();
+            executeCommand(aditionalArguments, commandsEnum);
         }
         scan.close();
     }
 
-
-
+    private void executeCommand(String aditionalArguments, CommandsEnum commandsEnum) {
+        Command commandToExecute = commands.getOrDefault(commandsEnum.toString(), new NonValidCommand());
+        commandToExecute.setCurrentNode(currentNode);
+        commandToExecute.setArgument(aditionalArguments);
+        commandToExecute.execute();
+    }
 
 
 }

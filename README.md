@@ -14,6 +14,7 @@ mvn clean install.
 # Testing
 The programs contains unit test as part of the code.
 The program contains Jacoco plugin and coverage, branches, etc can be viewed in target/site.
+Simulation test is ignored for maven build. Please ignore it or run all of them together.
 # Start
 From the root of the project :
 java -jar target/cmd-processor-1.0-SNAPSHOT.jar

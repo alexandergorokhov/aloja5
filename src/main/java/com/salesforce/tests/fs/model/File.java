@@ -1,4 +1,4 @@
-package com.salesforce.tests.fs.fs;
+package com.salesforce.tests.fs.model;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -15,7 +15,7 @@ public class File extends Node {
     }
 
     public File(String name) {
-        this.name=name;
+        this.name = name;
     }
 
     @Override

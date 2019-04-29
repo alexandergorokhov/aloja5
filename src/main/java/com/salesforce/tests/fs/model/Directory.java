@@ -1,4 +1,6 @@
-package com.salesforce.tests.fs.fs;
+package com.salesforce.tests.fs.model;
+
+import com.salesforce.tests.fs.fs.FileSystemTree;
 
 import java.util.List;
 import java.util.Optional;

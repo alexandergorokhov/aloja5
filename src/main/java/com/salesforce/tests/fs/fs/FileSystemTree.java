@@ -1,12 +1,20 @@
 package com.salesforce.tests.fs.fs;
 
+import com.salesforce.tests.fs.model.Directory;
+import com.salesforce.tests.fs.model.File;
+import com.salesforce.tests.fs.model.Node;
+
 import java.io.*;
 import java.util.HashMap;
 
 public class FileSystemTree {
 
     private static HashMap<String, Node> fileSystemMap = new HashMap();
-    private static final String FILE_PATH = "file_system_tree";
+    private static String FILE_PATH = "file_system_tree";
+
+    public static void setFilePath(String filePath) {
+        FILE_PATH = filePath;
+    }
 
     public static String getFilePath() {
         return FILE_PATH;
@@ -57,8 +65,8 @@ public class FileSystemTree {
     //Can be used to populate the initial File System Tree
     public static void populateMapForSimulation() {
         Node root = FileSystemTree.getFileSystemMap().get("root");
-        Node file1Level1 = new File("file1Level1");
-        Node file2Level1 = new File("file2Level1");
+        Node file1Level1 = new com.salesforce.tests.fs.model.File("file1Level1");
+        Node file2Level1 = new com.salesforce.tests.fs.model.File("file2Level1");
         Node directory1Level1 = new Directory("directory1Level1");
         Node directory2Level1 = new Directory("directory2Level1");
 
@@ -68,17 +76,17 @@ public class FileSystemTree {
         root.addChild(directory2Level1);
 
 
-        Node file1Level2 = new File("file1Level2");
+        Node file1Level2 = new com.salesforce.tests.fs.model.File("file1Level2");
         Node directory1Level2 = new Directory("directory1Level2");
         directory1Level1.addChild(file1Level2);
         directory1Level1.addChild(directory1Level2);
 
-        Node file2Level2 = new File("file2Level2");
-        Node file3Level2 = new File("file3Level2");
+        Node file2Level2 = new com.salesforce.tests.fs.model.File("file2Level2");
+        Node file3Level2 = new com.salesforce.tests.fs.model.File("file3Level2");
         directory2Level1.addChild(file2Level2);
         directory2Level1.addChild(file3Level2);
 
-        Node file1Level3 = new File("file1Level3");
+        Node file1Level3 = new com.salesforce.tests.fs.model.File("file1Level3");
         Node file2Level3 = new File("file2Level3");
 
         directory1Level2.addChild(file1Level3);

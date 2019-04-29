@@ -83,5 +83,7 @@ public class FsSimulation {
         commandToExecute.execute();
     }
 
-
+    public static Node getCurrentNode() {
+        return currentNode;
+    }
 }

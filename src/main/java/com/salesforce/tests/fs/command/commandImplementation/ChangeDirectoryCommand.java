@@ -10,11 +10,6 @@ public class ChangeDirectoryCommand implements Command {
     private Node currentNode;
     private String pathToChange;
 
-    public ChangeDirectoryCommand(Node currentNode, String pathToChange) {
-        this.currentNode = currentNode;
-        this.pathToChange = pathToChange;
-    }
-
     public ChangeDirectoryCommand() {
     }
 

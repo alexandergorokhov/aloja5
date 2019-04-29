@@ -1,9 +1,12 @@
 package com.salesforce.tests.fs;
 
+import com.salesforce.tests.fs.command.Command;
+import com.salesforce.tests.fs.command.commandImplementation.*;
 import com.salesforce.tests.fs.fs.*;
 import com.salesforce.tests.fs.model.Directory;
 import com.salesforce.tests.fs.model.File;
 import com.salesforce.tests.fs.model.Node;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
@@ -55,7 +58,7 @@ public class YourUnitTest {
     }
 
     @BeforeClass
-    public static  void setup() {
+    public static void setup() {
 
         root = (Directory) FileSystemTree.getFileSystemMap().get("/root");
 
@@ -85,7 +88,7 @@ public class YourUnitTest {
 
         directory1Level2.addChild(file1Level3);
         directory1Level2.addChild(file2Level3);
-        HashMap map =  FileSystemTree.getFileSystemMap();
+        HashMap map = FileSystemTree.getFileSystemMap();
 
     }
 
@@ -108,19 +111,19 @@ public class YourUnitTest {
     }
 
     @Test
-    public void PWDCommandRootTest() {
+    public void pwdCommandRootTest() {
         String result = root.getName();
         Assert.assertEquals("/root", result);
     }
 
     // ---LS
     @Test
-    public void LsDirectoryCommandTest() {
+    public void lsDirectoryCommandTest() {
         List<Node> results = directory1Level1.getChilds();
         List<Node> expected = new LinkedList<>();
         expected.add(file1Level2);
         expected.add(directory1Level2);
-        Assert.assertEquals(expected, results);
+        Assert.assertTrue(results.containsAll(expected));
     }
 
 
@@ -196,6 +199,15 @@ public class YourUnitTest {
     }
 
     @Test
+    public void mkdirTooLongNameTest() {
+        Command command = new MakeDirectoryCommand();
+        command.setCurrentNode(root);
+        command.setArgument(StringUtils.repeat("a", 101));
+        command.execute();
+        Assert.assertEquals("Directory name is too long" + System.getProperty("line.separator"), outContent.toString());
+    }
+
+    @Test
     public void mkdirNonExistingDiretoryCommandTest() {
         Directory directory = new Directory("directoryNewLevel1");
         root.addChild(directory);
@@ -266,8 +278,17 @@ public class YourUnitTest {
     public void createNewFileCommandTest() {
         File file = new File("newFile");
         directory1Level1.addChild(file);
-        Node result = FileSystemTree.getFileSystemMap().remove(file.getName());
+        Node result = FileSystemTree.getFileSystemMap().get(file.getName());
         Assert.assertEquals(result, file);
+    }
+
+    @Test
+    public void touchTooLongNameTest() {
+        Command command = new TouchFileCommand();
+        command.setCurrentNode(root);
+        command.setArgument(StringUtils.repeat("a", 101));
+        command.execute();
+        Assert.assertEquals("File  name is too long" + System.getProperty("line.separator"), outContent.toString());
     }
 
     @Test
@@ -290,6 +311,53 @@ public class YourUnitTest {
         map.remove("twei");
         Assert.assertTrue(result.equals(map));
     }
+
+    // Command
+
+    @Test
+    public void listCommandTest() {
+        Command command = new ListContentCommand();
+        command.setCurrentNode(root);
+        command.setArgument("root");
+        command.execute();
+        Assert.assertEquals("[/root/file1Level1, /root/file2Level1, /root/directory1Level1, /root/directory2Level1, /root/directoryNewLevel1]" + System.getProperty("line.separator"), outContent.toString());
+    }
+
+    @Test
+    public void listWithPathCommandTest() {
+        Command command = new ListContentCommand();
+        command.setCurrentNode(root);
+        command.setArgument("directory1Level1&directory1Level2");
+        command.execute();
+        Assert.assertEquals("[/root/file1Level1, /root/file2Level1, /root/directory1Level1, /root/directory2Level1]" + System.getProperty("line.separator"), outContent.toString());
+    }
+
+    @Test
+    public void listContentRecursivelyCommandTest() {
+        Command command = new ListContentRecursive();
+        command.setCurrentNode(directory1Level1);
+        command.execute();
+        Assert.assertEquals("/root/directory1Level1" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/file1Level2" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/directory1Level2" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/directory1Level2/file1Level3" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/directory1Level2/file2Level3" + System.getProperty("line.separator")
+                        + "/root/directory1Level1/newFile" + System.getProperty("line.separator")
+
+                , outContent.toString());
+    }
+
+
+    @Test
+    public void changeDirectoryCommandTest() {
+        Command command = new ChangeDirectoryCommand();
+        command.setCurrentNode(root);
+        command.setArgument("directory1Level1");
+        command.execute();
+        Node current = FsSimulation.getCurrentNode();
+        Assert.assertEquals("/root/directory1Level1", current.getName());
+    }
+
 
     @Ignore
     @Test

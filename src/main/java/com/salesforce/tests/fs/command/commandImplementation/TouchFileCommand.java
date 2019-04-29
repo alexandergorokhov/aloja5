@@ -17,10 +17,6 @@ public class TouchFileCommand implements Command {
         }
     }
 
-    public TouchFileCommand(Node currentNode, String name) {
-        this.currentNode = currentNode;
-        this.name = name;
-    }
 
     public TouchFileCommand() {
     }

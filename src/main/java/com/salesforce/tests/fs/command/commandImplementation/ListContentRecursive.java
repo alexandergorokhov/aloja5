@@ -9,10 +9,6 @@ public class ListContentRecursive implements Command {
     public ListContentRecursive() {
     }
 
-    public ListContentRecursive(Node currentNode) {
-        this.currentNode = currentNode;
-    }
-
     @Override
     public void execute() {
         currentNode.getCurrentAndChilds().forEach(System.out::println);

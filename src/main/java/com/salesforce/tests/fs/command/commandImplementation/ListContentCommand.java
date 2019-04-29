@@ -7,9 +7,6 @@ public class ListContentCommand implements Command {
     private Node currentNode;
     private String path;
 
-    public ListContentCommand(Node currentNode) {
-        this.currentNode = currentNode;
-    }
 
     public ListContentCommand() {
     }

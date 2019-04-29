@@ -9,12 +9,6 @@ public class MakeDirectoryCommand implements Command {
     private Node currentNode;
     private String name;
 
-
-    public MakeDirectoryCommand(Node currentNode, String name) {
-        this.currentNode = currentNode;
-        this.name = name;
-    }
-
     @Override
     public void execute() {
         if (CommandsUtils.isTheLengthWithinParameters(100, name, "Directory name is too long")) {

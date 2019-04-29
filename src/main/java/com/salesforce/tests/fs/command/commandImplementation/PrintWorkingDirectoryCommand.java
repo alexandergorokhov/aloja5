@@ -6,9 +6,6 @@ import com.salesforce.tests.fs.model.Node;
 public class PrintWorkingDirectoryCommand implements Command {
     private Node currentNode;
 
-    public PrintWorkingDirectoryCommand(Node currentNode) {
-        this.currentNode = currentNode;
-    }
 
     @Override
     public void execute() {

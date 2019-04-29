@@ -358,6 +358,12 @@ public class YourUnitTest {
         Assert.assertEquals("/root/directory1Level1", current.getName());
     }
 
+    @Test
+    public void nonValidCommandTest() {
+        Command command = new NonValidCommand();
+        command.execute();
+        Assert.assertEquals("Non valid command" + System.getProperty("line.separator"), outContent.toString());
+    }
 
     @Ignore
     @Test

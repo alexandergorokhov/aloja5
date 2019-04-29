@@ -21,7 +21,7 @@ public class CommandFactory {
             case "touch":
                 return new TouchFileCommand();
             default:
-                return null;
+               return new NonValidCommand();
         }
     }
 }
